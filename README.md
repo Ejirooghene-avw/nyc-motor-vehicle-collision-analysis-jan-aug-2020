@@ -1,203 +1,130 @@
----
+# NYC Motor Vehicle Collisions Analysis (2020)
 
-# NYC Motor Vehicle Collision Analysis (Jan–Aug 2020)
+An end-to-end data analysis project examining urban traffic collision patterns in New York City during 2020. This project explores temporal trends, high-risk spatial corridors, and key drivers of crash severity using Python (`pandas`, `matplotlib`, `seaborn`).
+
+---
 
 ## Executive Summary
 
-This repository contains a technical analysis of NYPD motor vehicle collision data from January to August 2020. The project pipeline ingests raw crash records, performs temporal and spatial feature engineering, isolates peak accident windows and high-density corridors, and evaluates contributing factors for overall versus fatal collisions to support data-driven municipal traffic safety strategies.
+An analysis of NYPD motor vehicle collision data reveals critical patterns in citywide traffic risk:
+
+* **Mid-Year Contraction:** Crash volume peaked in early winter (**January: 19.1%**, **February: 18.3%**) before experiencing a severe drop in **April (5.5%)** due to municipal lockdown measures—a **71.2% reduction** from January.
+* **Peak Risk Windows:** Collisions follow a commuting structure, with the late afternoon homeward commute (**14:00–18:00**) generating the highest volume. **Friday at 16:00** recorded the absolute peak (**870 crashes**).
+* **High-Risk Corridors:** Expressways dominate collision counts, led by **Belt Parkway**, which alone accounts for **~1.7%** of all citywide crashes.
+* **Volume vs. Severity Drivers:** While **Driver Inattention** is the leading cause of overall collision volume (**34.7%**), severe outcomes are driven by speed and signal violations—**Unsafe Speed (32.0%)** and **Traffic Control Disregarded (14.6%)** are the leading factors in fatal accidents.
 
 ---
 
-## Repository Architecture
+## Key Business Questions & Analytical Insights
+
+### 1. Monthly Trends & Seasonal Patterns
+
+Incident frequency was heavily front-loaded before contracting during spring lockdowns. Volume steadily recovered from May through July before stabilizing in August well below pre-pandemic baseline levels.
+
+* **January & February:** Accounted for **37.4%** of total reported accidents.
+* **April Trough:** Dropped to **5.5%** of annual volume (**71.2% reduction** from January).
+* **Recovery Phase:** May (**8.2%**), June (**10.7%**), July (**12.3%**), and August (**11.7%**).
+
+---
+
+### 2. Temporal Distribution (Day & Hour)
+
+Accident frequency is concentrated during evening commute hours, where traffic density and driver fatigue intersect.
+
+* **High-Risk Day:** **Friday** registered the highest overall crash total (**12,271 collisions**).
+* **Peak Hour:** **16:00 (4:00 PM)** on Friday experienced the highest single concentration (**870 collisions**).
+* **Commute Contrast:** Late afternoon volume (**14:00–18:00**) is nearly **3x higher** than morning rush-hour volume (**08:00–09:00**).
+
+---
+
+### 3. Spatial Risk & High-Accident Corridors
+
+Multi-lane, high-speed roadways account for a disproportionate share of collisions across the five boroughs.
+
+| Rank | Street / Corridor | % of Total Crashes | Risk Profile |
+| --- | --- | --- | --- |
+| **1** | **BELT PARKWAY** | **~1.66%** | High-speed multi-lane parkway |
+| **2** | **LONG ISLAND EXPRESSWAY** | **0.99%** | Major inter-borough commuter arterial |
+| **3** | **BROOKLYN QUEENS EXPRESSWAY** | **0.84%** | Dense freight and passenger corridor |
+
+---
+
+### 4. Contributing Factors: Volume vs. Fatality
+
+Filtering out uninformative entries reveals a clear distinction between factors that cause general accidents versus those that result in fatalities:
+
+* **Overall Collisions:** **Driver Inattention/Distraction** (**34.7%**) dominates general crash incidents.
+* **Fatal Collisions:** **Unsafe Speed** (**32.0%**) and **Traffic Control Disregarded** (**14.6%**) combine for nearly **46.6%** of all fatal events.
+
+> **Takeaway:** Routine distraction drives overall collision frequency, but velocity and signal non-compliance drive lethality.
+
+---
+
+## Actionable Recommendations
+
+1. **Targeted Speed Enforcement:** Deploy automated speed monitoring and patrol units along the **Belt Parkway** and **Long Island Expressway**, specifically during Friday afternoon peak windows (**14:00–18:00**).
+2. **Infrastructure & Signal Safety:** Re-engineer high-risk arterial intersections to deter red-light running, directly addressing the secondary driver of fatal crashes.
+3. **Public Awareness Campaigns:** Focus safety campaigns on driver distraction during evening commutes rather than morning travel.
+
+---
+
+## Repository Structure
 
 ```text
+nyc-vehicle-collisions-2020/
 ├── data/
-│   ├── raw/                  # Original NYPD Collision Dataset (.csv)
-│   └── processed/            # Processed dataset with engineered temporal & target attributes
+│   └── cleaned_nyc_collisions_2020.csv
+├── exports/
+│   ├── monthly_crash_trends.csv
+│   ├── top_corridors.csv
+│   ├── day_hour_matrix.csv
+│   └── contributing_factors_summary.csv
+├── visuals/
+│   ├── 1_monthly_trajectory.png
+│   ├── 2_top_corridors.png
+│   ├── 3_risk_heatmap.png
+│   └── 4_contributing_factors.png
 ├── notebooks/
-│   └── 01_eda_collisions.ipynb # Jupyter Notebook containing exploratory data analysis
-├── src/
-│   ├── data_hygiene.py       # Datetime parsing, text normalization, and feature engineering
-│   └── visualizations.py     # Seaborn/Matplotlib plot generation scripts
-├── outputs/
-│   └── figures/              # Exported high-resolution visualization assets (.png)
-├── README.md                 # Technical project documentation
-└── requirements.txt          # Dependent Python packages
+│   └── nyc_collision_analysis.ipynb
+├── README.md
+└── requirements.txt
 
 ```
 
 ---
 
-## Data Schema & Feature Engineering Contract
+## Technical Stack & Methodology
 
-The analysis pipeline processes the following core schema extracted from the raw NYPD dataset:
-
-| Raw Column Header | Data Type | Engineered Feature | Analytical Role / Data Hygiene Rule |
-| --- | --- | --- | --- |
-| `CRASH DATE` | `object` | `MONTH_NAME`, `DAY_OF_WEEK` | Parsed to `datetime64`; extracted month string and day name for seasonal/weekly breakdown. |
-| `CRASH TIME` | `object` | `HOUR` | Parsed to `datetime64`; extracted integer hour ($0-23$) for temporal heat matrix. |
-| `ON STREET NAME` | `object` | `ON_STREET_CLEAN` | Cast to string, stripped of leading/trailing whitespace, converted to uppercase. |
-| `NUMBER OF PERSONS KILLED` | `int64` | `IS_FATAL` | Boolean flag (`True` if `KILLED > 0`) for fatal subset analysis. |
-| `CONTRIBUTING FACTOR VEHICLE 1` | `object` | `FACTOR_CLEAN` | Filtered to exclude `'Unspecified'` and null values (`NaN`). |
-| `COLLISION_ID` | `int64` | `COLLISION_ID` | Primary key used for deduplication and denominator calculations. |
-
----
-
-## Pipeline Execution Code (`src/data_hygiene.py`)
-
-```python
-import numpy as np
-import pandas as pd
+* **Language & Environment:** Python 3.10+, Jupyter Notebook
+* **Data Manipulation:** `pandas`, `numpy`
+* **Visualization:** `matplotlib`, `seaborn`
+* **Data Processing Highlights:**
+* Cleaned and standardized street names across multi-borough entries.
+* Extracted temporal attributes (Month, Day of Week, Hour) from standard timestamp strings.
+* Filtered out generic/unspecified causes (`Unspecified`, `Paved Skids`, etc.) to isolate actionable contributing factors.
 
 
-def load_and_clean_collisions(filepath: str) -> pd.DataFrame:
-    """Ingests raw NYPD collision CSV, normalizes temporal and spatial fields,
-
-    and creates engineered target features.
-    """
-    df = pd.read_csv(filepath, low_memory=False)
-
-    # 1. Temporal Feature Engineering
-    df["CRASH DATE"] = pd.to_datetime(df["CRASH DATE"])
-    df["MONTH_NAME"] = df["CRASH DATE"].dt.strftime("%b")
-    df["DAY_OF_WEEK"] = df["CRASH DATE"].dt.day_name()
-    df["HOUR"] = pd.to_datetime(
-        df["CRASH TIME"].astype(str), format="%H:%M"
-    ).dt.hour
-
-    # 2. Spatial Standardization
-    df["ON_STREET_CLEAN"] = (
-        df["ON STREET NAME"].astype(str).str.strip().str.upper()
-    )
-
-    # 3. Severity Outcome Engineering
-    df["IS_FATAL"] = df["NUMBER OF PERSONS KILLED"] > 0
-
-    return df
-
-
-if __name__ == "__main__":
-    df = load_and_clean_collisions("data/raw/nypd_collisions.csv")
-    print(f"Pipeline Execution Complete. Processed {len(df):,} collision records.")
-
-```
 
 ---
 
-## Core Analytical Computations (`src/analysis.py`)
+## Getting Started
 
-```python
-import numpy as np
-import pandas as pd
-
-
-def compute_collision_metrics(df: pd.DataFrame) -> dict:
-    """Computes specific metrics answering stakeholder questions."""
-    total_records = len(df)
-
-    # Q1: Monthly Distribution (% of Total)
-    month_order = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-    ]
-    monthly_pct = (
-        (df["MONTH_NAME"].value_counts(normalize=True) * 100)
-        .reindex(month_order)
-        .round(2)
-    )
-
-    # Q2: Day x Hour Frequency Matrix
-    day_order = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ]
-    day_hour_matrix = (
-        df.groupby(["DAY_OF_WEEK", "HOUR"]).size().unstack().reindex(day_order)
-    )
-    peak_window = df.groupby(["DAY_OF_WEEK", "HOUR"]).size().idxmax()
-
-    # Q3: Top Street & Concentration Percentage
-    valid_streets = df[df["ON_STREET_CLEAN"] != "NAN"]["ON_STREET_CLEAN"]
-    street_counts = valid_streets.value_counts()
-    top_street = street_counts.index[0]
-    top_street_pct = round((street_counts.iloc[0] / total_records) * 100, 2)
-
-    # Q4: Contributing Factors (Overall vs Fatal)
-    valid_factors = df[
-        ~df["CONTRIBUTING FACTOR VEHICLE 1"].isin(
-            ["Unspecified", np.nan, "NAN"]
-        )
-    ]
-    top_factor_overall = (
-        valid_factors["CONTRIBUTING FACTOR VEHICLE 1"]
-        .value_counts()
-        .idxmax()
-    )
-
-    fatal_subset = valid_factors[valid_factors["IS_FATAL"] == True]
-    top_factor_fatal = (
-        fatal_subset["CONTRIBUTING FACTOR VEHICLE 1"].value_counts().idxmax()
-    )
-
-    return {
-        "monthly_pct": monthly_pct.to_dict(),
-        "peak_window": peak_window,
-        "top_street": top_street,
-        "top_street_pct": top_street_pct,
-        "top_factor_overall": top_factor_overall,
-        "top_factor_fatal": top_factor_fatal,
-    }
-
-```
-
----
-
-## Visualization Storyboard & Output Assets
-
-Generated figures are saved in the `outputs/figures/` directory:
-
-| Asset Name | Chart Type | Analytical Function |
-| --- | --- | --- |
-| `monthly_trend.png` | Bar Chart | Visualizes the sharp contraction in April 2020 ($\approx 6.2\%$) and summer rebound. |
-| `day_hour_heatmap.png` | Heatmap | Highlights peak incident density during weekday late afternoon commutes ($14:00 - 18:00$). |
-| `top_corridors.png` | Horizontal Bar | Ranks the top 10 collision corridors by total volume (led by Flatbush Avenue at $1.42\%$). |
-| `factor_comparison.png` | Dual Bar | Compares primary cause shift: Driver Inattention (Overall) vs. Speed/Alcohol (Fatal). |
-
----
-
-## Reproduction & Environment Setup
-
-1. **Clone Repository:**
+1. **Clone the repository:**
 ```bash
-git clone https://github.com/yourusername/nyc-collision-analysis.git
-cd nyc-collision-analysis
+git clone https://github.com/your-username/nyc-vehicle-collisions-2020.git
+cd nyc-vehicle-collisions-2020
 
 ```
 
 
-2. **Initialize Environment & Install Dependencies:**
+2. **Install dependencies:**
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 ```
 
 
-3. **Execute Analysis Pipeline:**
+3. **Run the Notebook:**
 ```bash
-python src/data_hygiene.py
-python src/visualizations.py
+jupyter notebook notebooks/nyc_collision_analysis.ipynb
 
-```
