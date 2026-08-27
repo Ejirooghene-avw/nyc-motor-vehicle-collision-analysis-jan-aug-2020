@@ -1,4 +1,4 @@
-# nyc-motor-vehicle-collision-analysis-jan-aug-2020
+# NYC Motor Vehicle Collisions Analysis (Jan–Aug 2020)
 
 An end-to-end data analysis project examining urban traffic collision patterns across New York City during the first eight months of 2020. This project analyzes seasonal fluctuations, high-risk spatial corridors, and drivers of crash severity using Python (`pandas`, `matplotlib`, `seaborn`).
 
