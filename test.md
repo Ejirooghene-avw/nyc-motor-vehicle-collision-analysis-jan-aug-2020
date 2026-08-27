@@ -15,7 +15,7 @@ An end-to-end data analysis project examining urban traffic collision patterns a
 
 ## Key Business Questions & Analytical Insights
 
-### 1. Monthly Trends & Seasonal Variation
+### Question 1: How do accident percentages vary by month, Do accident counts fluctuate and indicate seasonal patterns in the data?
 Incident frequency experienced a severe spring contraction rather than traditional seasonal cycles, directly aligning with NYC stay-at-home mandates.
 
 * **Winter Peak:** January (**19.1%**) and February (**18.3%**) combined for **37.4%** of all reported crashes.
@@ -26,7 +26,7 @@ Incident frequency experienced a severe spring contraction rather than tradition
 
 ---
 
-### 2. Temporal Risk Distribution (Day & Hour)
+### Question 2: What is the number of incidents on each day of the week and hour of the day, and during which time of the day are accidents the most frequent?
 Traffic risk is heavily concentrated during late afternoon hours when commuter volume and driver fatigue intersect.
 
 * **High-Risk Day:** **Friday** registered the highest total volume (**12,271 crashes**).
@@ -37,7 +37,7 @@ Traffic risk is heavily concentrated during late afternoon hours when commuter v
 
 ---
 
-### 3. Spatial Risk & High-Accident Corridors
+### Question 3: On which street do most number of accidents occur, and what percentage of the actual reported did that specific street account?
 High-speed parkways and expressways constitute the primary spatial risk corridors across the city:
 
 | Rank | Street / Corridor | % Share of Attributed Crashes | Corridor Type |
@@ -51,7 +51,7 @@ High-speed parkways and expressways constitute the primary spatial risk corridor
 
 ---
 
-### 4. Contributing Factors: Volume vs. Fatality
+### Question 4: Which factor attributes to be the most common contributing factor for Vehicle 1, and more specifically, what is the most common contributing factor to the most serious incidents?
 Filtering out uninformative entries (*Unspecified*) isolates true underlying crash behaviors:
 
 * **Overall Collisions (Volume Driver):** **Driver Inattention/Distraction** leads overall incidents at **34.7%**.
