@@ -15,45 +15,49 @@ An end-to-end data analysis project examining urban traffic collision patterns a
 
 ## Key Business Questions & Analytical Insights
 
-### 1. Monthly Trends & Seasonal Variation
-
+### Question 1: How do accident percentages vary by month, Do accident counts fluctuate and indicate seasonal patterns in the data?
 Incident frequency experienced a severe spring contraction rather than traditional seasonal cycles, directly aligning with NYC stay-at-home mandates.
 
 * **Winter Peak:** January (**19.1%**) and February (**18.3%**) combined for **37.4%** of all reported crashes.
 * **Spring Trough:** Volume dropped to **5.5%** in April (**71.2% drop** from January).
 * **Summer Recovery:** Volume stabilized from June (**10.2%**) to August (**11.7%**), remaining below early-year baselines.
 
+<img src="visuals/1. monthly_crash_trend.png" alt="Monthly Crash Trend" width="100%">
+
 ---
 
-### 2. Temporal Risk Distribution (Day & Hour)
-
+### Question 2: What is the number of incidents on each day of the week and hour of the day, and during which time of the day are accidents the most frequent?
 Traffic risk is heavily concentrated during late afternoon hours when commuter volume and driver fatigue intersect.
 
 * **High-Risk Day:** **Friday** registered the highest total volume (**12,271 crashes**).
 * **Peak Risk Hour:** **Friday at 16:00 (4:00 PM)** reached the peak incident count (**870 collisions**).
 * **Commute Contrast:** Afternoon rush volume (**14:00–18:00**) is nearly **3x higher** than morning rush volume (**08:00–09:00**).
 
+<img src="visuals/2. accident_frequency.png" alt="Accident Frequency Heatmap" width="100%">
+
 ---
 
-### 3. Spatial Risk & High-Accident Corridors
-
+### Question 3: On which street do most number of accidents occur, and what percentage of the actual reported did that specific street account?
 High-speed parkways and expressways constitute the primary spatial risk corridors across the city:
 
 | Rank | Street / Corridor | % Share of Attributed Crashes | Corridor Type |
-| --- | --- | --- | --- |
+| :--- | :--- | :--- | :--- |
 | **1** | **BELT PARKWAY** | **2.24%** | Multi-lane arterial parkway |
 | **2** | **LONG ISLAND EXPRESSWAY** | **1.34%** | Major inter-borough highway |
 | **3** | **BROOKLYN QUEENS EXPRESSWAY** | **1.33%** | Dense freight and commuter highway |
 | **4** | **FDR DRIVE** | **1.31%** | Manhattan waterfront express corridor |
 
+<img src="visuals/3. top_high_accident.png" alt="Top High-Accident Corridors" width="100%">
+
 ---
 
-### 4. Contributing Factors: Volume vs. Fatality
-
+### Question 4: Which factor attributes to be the most common contributing factor for Vehicle 1, and more specifically, what is the most common contributing factor to the most serious incidents?
 Filtering out uninformative entries (*Unspecified*) isolates true underlying crash behaviors:
 
 * **Overall Collisions (Volume Driver):** **Driver Inattention/Distraction** leads overall incidents at **34.7%**.
 * **Fatal Collisions (Severity Drivers):** **Unsafe Speed** (**32.0%**) and **Traffic Control Disregarded** (**14.6%**) account for nearly **46.6%** of all fatal events.
+
+<img src="visuals/4. crash_factors.png" alt="Crash Factors Comparison" width="100%">
 
 > **Key Takeaway:** Cognitive distraction drives overall crash volume, but excessive speed and red-light running drive lethality.
 
@@ -76,7 +80,7 @@ nyc-motor-vehicle-collision-analysis-jan-aug-2020/
 │   └── raw.csv
 ├── exports/
 │   ├── comp_df.csv
-│   ├── crash_data_long.csv
+│   ├── day_hour_matrix_formatted.csv
 │   ├── monthly_crash_pct.csv
 │   └── top_streets.csv
 ├── notebooks/
@@ -112,7 +116,7 @@ nyc-motor-vehicle-collision-analysis-jan-aug-2020/
 ### 1. Clone the Repository & Install Dependencies
 
 ```bash
-git clone https://github.com/Ejirooghene-avw/nyc-motor-vehicle-collision-analysis-jan-aug-2020.git
+git clone [https://github.com/Ejirooghene-avw/nyc-motor-vehicle-collision-analysis-jan-aug-2020.git](https://github.com/Ejirooghene-avw/nyc-motor-vehicle-collision-analysis-jan-aug-2020.git)
 cd nyc-motor-vehicle-collision-analysis-jan-aug-2020
 pip install -r requirements.txt
 
